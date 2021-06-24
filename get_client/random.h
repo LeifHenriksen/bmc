@@ -1,9 +1,6 @@
 #ifndef RANDOM_H
 #define RANDOM_H
 
-#include <string.h>
-#include <assert.h>
-
 struct zipf_distribution {
 	unsigned int item_count;
 	double alpha, zetan, eta, theta;

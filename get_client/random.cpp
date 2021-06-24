@@ -83,23 +83,18 @@ char *generate_strings(size_t count, size_t str_length)
 {
     static char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";    
     char *strings = (char *) malloc(count * str_length * sizeof(char));
-	
+
     if(!strings) {
         perror("malloc");
 		return NULL;
 	}
  
     for (size_t n = 0; n < count; ++n) {
-		
-start:
         for (size_t i = 0; i < str_length; ++i) {
             short key  = rand() % (sizeof(charset) - 1);
             strings[n * str_length + i] = charset[key];
         }
-
-		// Avoid duplicates
-		for(size_t j = 0; j < n; ++j)
-			if(strncmp(&strings[n * str_length], &strings[j * str_length], str_length) == 0) goto start;
+        
     }
     return strings;
 }
