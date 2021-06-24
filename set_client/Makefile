@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS= -Wall -O3 -g
+CFLAGS= -Wall -O3 -g -pedantic -Wextra
 LIBS= -lm -lpthread
 
 

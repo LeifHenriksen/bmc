@@ -1,11 +1,12 @@
 #include "client.h"
 
-int main(int argc, char **argv)
+int main()
 {
-    int nproc, ret, thread_count, delta;
+    int ret, delta;
     struct zipf_distribution zipf;
     char *keys;
     struct thread_wrapper *threads;
+    uint8_t nproc, thread_count;
 
     nproc = get_nprocs();
     threads = (struct thread_wrapper *) malloc(sizeof(struct thread_wrapper) * nproc);
