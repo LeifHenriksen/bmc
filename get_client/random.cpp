@@ -21,7 +21,7 @@ int random_weighted_choice(double *weights, double sum_of_weight, unsigned int n
 		random_int = rand_r(&_th_seed);
 	} while (random_int == RAND_MAX);
 	double rnd = ((double) random_int / (double) RAND_MAX) * sum_of_weight;
-	for (int i = 0; i < num_choices; i++) {
+	for (size_t i = 0; i < num_choices; i++) {
 	 	if (rnd < weights[i])
 	 		return i;
 	 	rnd -= weights[i];
@@ -39,7 +39,7 @@ void zipf_distribution_init(struct zipf_distribution *zipf, unsigned int n, doub
 	double eta = 0.0;
 	double theta = skew;
 
-	for (int i = 0; i < n; i++) {
+	for (size_t i = 0; i < n; i++) {
 		zetan += 1 / pow(i+1, theta);
 	}
 

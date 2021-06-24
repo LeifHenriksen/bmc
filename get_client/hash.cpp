@@ -8,7 +8,7 @@
 #define FNV_PRIME_2_32                  83227
 #define MAX_KEY_SIZE 16
 
-unsigned int get_hash(char *key)
+unsigned int get_hash(const char *key)
 {
   unsigned int hash = FNV_OFFSET_BASIS_32;
   for(unsigned int i = 0; i < MAX_KEY_SIZE; i++)
@@ -19,7 +19,7 @@ unsigned int get_hash(char *key)
   return hash;
 }
 
-unsigned int get_hash2(char *key)
+unsigned int get_hash2(const char *key)
 {
   unsigned int hash = FNV_OFFSET_BASIS_32;
   for(unsigned int i = 0; i < MAX_KEY_SIZE; i++)
