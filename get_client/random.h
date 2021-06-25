@@ -1,6 +1,9 @@
 #ifndef RANDOM_H
 #define RANDOM_H
 
+#include <string.h>
+#include <assert.h>
+
 struct zipf_distribution {
 	unsigned int item_count;
 	double alpha, zetan, eta, theta;
@@ -13,4 +16,5 @@ void zipf_distribution_init(struct zipf_distribution *zipf, unsigned int n, doub
 unsigned int zipf_distribution_next(struct zipf_distribution *zipf);
 
 char *generate_strings(size_t count, size_t str_length);
+void memcached_gen_key(char *buffer, size_t key_length, unsigned int key_num);
 #endif
