@@ -1,5 +1,9 @@
 #!/bin/sh
-
+if [ ${1} -eq 0 ] || [ ${2} -eq 0 ] 
+  then
+    echo "No arguments supplied"
+    exit 1
+fi
 ####################  Test 1 base bmc ############################
 echo "================================Starting test 1 : base bmc========================================"
 nohup ./bmc 1 &
@@ -8,7 +12,7 @@ sleep 2
 
 #Send requests
 echo "Sending requests..."
-./get_client localhost 11211 1000000 100000
+./get_client localhost 11211 ${1} ${2}
 
 #Get stats
 echo "Get stats"
@@ -29,7 +33,8 @@ sleep 2
 
 #Send requests
 echo "Sending requests..."
-./get_client localhost 11211 1000000 100000
+./get_client localhost 11211 ${1} ${2}
+
 
 #Get stats
 echo "Get stats"
