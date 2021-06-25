@@ -19,7 +19,7 @@
 #define MC_PORT 11211
 
 #define RAND_INIT 42
-#define KEY_COUNT 50000
+#define KEY_COUNT 30000000
 #define ZIPF_SKEW 0.99f
 #define KEY_SIZE 16
 
@@ -29,12 +29,11 @@
 
 struct thread_wrapper {
     pthread_t t;
-    struct zipf_distribution *zipf;
-    char **keys;
     uint32_t start;
     uint32_t stop;
 };
 
 void *populate_memcd(void *arg);
+void send_set();
 
 #endif
