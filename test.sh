@@ -8,7 +8,7 @@ sleep 2
 
 #Send requests
 echo "Sending requests..."
-./get_client localhost 11211
+./get_client localhost 11211 1000000 100000
 
 #Get stats
 echo "Get stats"
@@ -29,7 +29,7 @@ sleep 2
 
 #Send requests
 echo "Sending requests..."
-./get_client localhost 11211
+./get_client localhost 11211 1000000 100000
 
 #Get stats
 echo "Get stats"

@@ -7,20 +7,20 @@
 #include "client.h"
 
 #define RAND_INIT 42
-#define KEY_COUNT 100000
-#define GET_COUNT 1000000
 #define ZIPF_SKEW .99
 #define KEY_SIZE 16
 
 int main(int argc, char **argv)
 {
-  if(argc < 3)
+  if(argc < 5)
     {
-      printf("Error in arguments : Usage ./get_client IP PORT\n");
+      printf("Error in arguments : Usage ./get_client IP PORT GET_COUNT KEY_COUNT\n");
       exit(0);
     }
-  
+
   Client c(argv[1], atoi(argv[2]));
+  size_t GET_COUNT = atoi(argv[3]);	
+  size_t KEY_COUNT = atoi(argv[4]); 
   struct zipf_distribution zipf;
 
   srand(RAND_INIT);
