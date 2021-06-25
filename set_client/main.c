@@ -1,5 +1,5 @@
+#include <stdlib.h>
 #include "client.h"
-
 
 int main()
 {
@@ -7,7 +7,9 @@ int main()
     printf("===============================================\n");
     printf("Key count : %u\n", KEY_COUNT);
     printf("Key size  : %u\n", KEY_SIZE);
-    printf("Zipf skew :%f\n", ZIPF_SKEW);
+    printf("Zipf skew : %f\n", ZIPF_SKEW);
     printf("===============================================\n");
+
+    srand(RAND_INIT);
     send_set();
 }

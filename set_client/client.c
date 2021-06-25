@@ -12,7 +12,7 @@ void send_set()
 
     delta = (float)KEY_COUNT / nproc;
     thread_count = 0;
-    
+
     for(size_t i = 0; i < nproc; ++i) {
         threads[i].start = i * delta;
         threads[i].stop = threads[i].start + delta;
@@ -45,7 +45,6 @@ void *populate_memcd(void *arg)
     char key[16];
     char value[32];
 
-    printf("Connecting to memcached server...\n");
     if((sfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         perror("socket");
         exit(1);
