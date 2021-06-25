@@ -13,8 +13,6 @@
 #include <sys/sysinfo.h>
 #include <pthread.h>
 
-#include "random.h"
-
 #define MC_IP "127.0.0.1"
 #define MC_PORT 11211
 
@@ -25,15 +23,14 @@
 
 #define SEND_COUNT 100000
 
-#define TRANSLATE_ID(i) ((i) * KEY_SIZE)
-
 struct thread_wrapper {
     pthread_t t;
     uint32_t start;
     uint32_t stop;
 };
-
 void *populate_memcd(void *arg);
+
+void memcached_gen_key(char *buffer, size_t key_length, unsigned int key_num);
 void send_set();
 
 #endif

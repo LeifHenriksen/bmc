@@ -3,20 +3,13 @@
 void send_set()
 {
     int ret, delta;
-    struct zipf_distribution zipf;
     struct thread_wrapper *threads;
     uint8_t nproc, thread_count;
 
     nproc = get_nprocs();
+    printf("%u proc availables.\n", nproc);
     threads = (struct thread_wrapper *) malloc(sizeof(struct thread_wrapper) * nproc);
-    
-    srand(RAND_INIT);
 
-    printf("Zipf init...\n");
-    random_init_seed(RAND_INIT);
-    zipf_distribution_init(&zipf, KEY_COUNT, 0.99f);
-
-    printf("Generating keys...\n");
     delta = (float)KEY_COUNT / nproc;
     thread_count = 0;
     
@@ -85,4 +78,17 @@ void *populate_memcd(void *arg)
     close(sfd);
     printf("Thread range : %u-%u, done.\n", cfg->start, cfg->stop);
     return NULL;
+}
+
+void memcached_gen_key(char *buffer, size_t key_length, unsigned int key_num)
+{
+	char padding = 0;
+	unsigned int written = 0;
+
+	written = snprintf(buffer, key_length, "%u", key_num);
+	while (written < key_length) {
+		buffer[written] = 'A' + (padding % 58);
+		padding++;
+		written++;
+	}
 }
