@@ -197,7 +197,7 @@ int main(int argc, char *argv[])
 	for (int i = 0; i < interface_count && optind < argc; optind++, i++) {
 		interfaces_idx[i] = atoi(argv[optind]);
 	}
-	xdp_flags |= XDP_FLAGS_DRV_MODE;
+	xdp_flags |= XDP_FLAGS_SKB_MODE;
 	nr_cpus = libbpf_num_possible_cpus();
 
 	snprintf(filename, sizeof(filename), "%s_kern.o", argv[0]);

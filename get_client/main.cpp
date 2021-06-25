@@ -7,8 +7,8 @@
 #include "client.h"
 
 #define RAND_INIT 42
-#define KEY_COUNT 50000
-#define GET_COUNT 50000
+#define KEY_COUNT 100000
+#define GET_COUNT 1000000
 #define ZIPF_SKEW .99
 #define KEY_SIZE 16
 
@@ -35,7 +35,7 @@ int main(int argc, char **argv)
       unsigned int id = zipf_distribution_next(&zipf);
       char curr_key[17];
       memcached_gen_key(curr_key, KEY_SIZE, id);
-      printf("GET key %li %.16s\n", i, curr_key);
+      //printf("id = %u, i = %li, GET key %.16s\n", id, i, curr_key);
       c.get(std::string(curr_key, KEY_SIZE));
     }
   
