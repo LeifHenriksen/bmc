@@ -28,9 +28,11 @@ struct thread_wrapper {
     uint32_t start;
     uint32_t stop;
 };
+
+
 void *populate_memcd(void *arg);
 
 void memcached_gen_key(char *buffer, size_t key_length, unsigned int key_num);
-void send_set();
+void send_set(unsigned long key_count);
 
 #endif

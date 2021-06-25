@@ -1,16 +1,18 @@
 #include "client.h"
 
-void send_set()
-{
-    int ret, delta;
+void send_set(unsigned long key_count)
+{    int ret, delta;
     struct thread_wrapper *threads;
     uint8_t nproc, thread_count;
 
     nproc = get_nprocs();
+
+    if(nproc > key_count) nproc = key_count - 1;
+
     printf("%u proc availables.\n", nproc);
     threads = (struct thread_wrapper *) malloc(sizeof(struct thread_wrapper) * nproc);
 
-    delta = (float)KEY_COUNT / nproc;
+    delta = (float)key_count / nproc;
     thread_count = 0;
 
     for(size_t i = 0; i < nproc; ++i) {
@@ -20,7 +22,7 @@ void send_set()
         ret = pthread_create(&threads[i].t, NULL, populate_memcd, (void *) &threads[i]);
         if(ret != 0) {
             perror("pthread_create");
-            threads[i].stop = KEY_COUNT;
+            threads[i].stop = key_count;
 
             // If we can't create any other thread, remaining range will be handled by the main one.
             if(i == 0) threads[i].start = 0;

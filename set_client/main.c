@@ -1,10 +1,12 @@
 #include <stdlib.h>
 #include "client.h"
 
-unsigned long key_count = KEY_COUNT;
+
 
 int main(int argc, char **argv)
 {
+    unsigned long key_count;
+
     if(argc != 2){
         printf("Usage : %s key_count\n", argv[0]);
         exit(-1);
@@ -28,5 +30,5 @@ int main(int argc, char **argv)
     
 
     srand(RAND_INIT);
-    send_set();
+    send_set(key_count);
 }
