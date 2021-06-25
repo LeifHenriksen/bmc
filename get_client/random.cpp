@@ -5,7 +5,7 @@
 
 #include "random.h"
 
-static unsigned int __thread _th_seed;
+static __thread unsigned int _th_seed;
 
 void random_init_seed(unsigned int seed)
 {
@@ -74,27 +74,15 @@ unsigned int zipf_distribution_next(struct zipf_distribution *zipf)
 	return (unsigned int)(zipf->item_count * pow(zipf->eta*u - zipf->eta + 1, zipf->alpha));
 }
 
-
-/*
-    Generate an array of strings.
-    To access key of rank N do : strings[N * str_length].
-*/
-char *generate_strings(size_t count, size_t str_length)
+void memcached_gen_key(char *buffer, size_t key_length, unsigned int key_num)
 {
-    static char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";    
-    char *strings = (char *) malloc(count * str_length * sizeof(char));
+	char padding = 0;
+	unsigned int written = 0;
 
-    if(!strings) {
-        perror("malloc");
-		return NULL;
+	written = snprintf(buffer, key_length+1, "%u", key_num);
+	while (written < key_length) {
+		buffer[written] = 'A' + (padding % 58);
+		padding++;
+		written++;
 	}
- 
-    for (size_t n = 0; n < count; ++n) {
-        for (size_t i = 0; i < str_length; ++i) {
-            short key  = rand() % (sizeof(charset) - 1);
-            strings[n * str_length + i] = charset[key];
-        }
-        
-    }
-    return strings;
 }

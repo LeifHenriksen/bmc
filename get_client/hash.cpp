@@ -32,11 +32,10 @@ unsigned int get_hash2(const char *key)
 
 #include "random.h"
 #define RAND_INIT 42
-//#define KEY_COUNT 60000000
 #define KEY_COUNT   10000000
 #define ZIPF_SKEW .99
 #define KEY_SIZE 16
-
+/*
 void test()
 {
   struct zipf_distribution zipf;
@@ -83,3 +82,4 @@ void test()
 
   printf("Collisions with hash = %u, collisions with hash2 = %u\n", collision_count_hash, collision_count_hash2);
 }
+*/

@@ -8,6 +8,7 @@
 
 #define RAND_INIT 42
 #define KEY_COUNT 50000
+#define GET_COUNT 50000
 #define ZIPF_SKEW .99
 #define KEY_SIZE 16
 
@@ -21,7 +22,6 @@ int main(int argc, char **argv)
   
   Client c(argv[1], atoi(argv[2]));
   struct zipf_distribution zipf;
-  char *keys;
 
   srand(RAND_INIT);
 
@@ -29,14 +29,13 @@ int main(int argc, char **argv)
   random_init_seed(RAND_INIT);
   zipf_distribution_init(&zipf, KEY_COUNT, 0.99f);
 
-  printf("Generating keys...\n");
-  keys = generate_strings(KEY_COUNT, KEY_SIZE);
-
   printf("Sending requests...\n");
-  for(size_t i = 0; i < KEY_COUNT; ++i)
+  for(size_t i = 0; i < GET_COUNT; ++i)
     {
       unsigned int id = zipf_distribution_next(&zipf);
-      char *curr_key = &keys[id * KEY_SIZE];
+      char curr_key[17];
+      memcached_gen_key(curr_key, KEY_SIZE, id);
+      printf("GET key %li %.16s\n", i, curr_key);
       c.get(std::string(curr_key, KEY_SIZE));
     }
   
