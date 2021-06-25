@@ -25,6 +25,7 @@ int main(int argc, char **argv)
 
   srand(RAND_INIT);
 
+  printf("get_client : GET_COUNT = %li, KEY_COUNT = %li\n", GET_COUNT, KEY_COUNT);
   printf("Zipf init...\n");
   random_init_seed(RAND_INIT);
   zipf_distribution_init(&zipf, KEY_COUNT, 0.99f);
@@ -33,7 +34,7 @@ int main(int argc, char **argv)
   for(size_t i = 0; i < GET_COUNT; ++i)
     {
       unsigned int id = zipf_distribution_next(&zipf);
-      char curr_key[17];
+      char curr_key[KEY_SIZE + 1];
       memcached_gen_key(curr_key, KEY_SIZE, id);
       //printf("id = %u, i = %li, GET key %.16s\n", id, i, curr_key);
       c.get(std::string(curr_key, KEY_SIZE));
