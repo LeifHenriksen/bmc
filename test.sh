@@ -12,7 +12,7 @@ sleep 2
 
 #Send requests
 echo "Sending requests..."
-./get_client localhost 11211 ${1} ${2}
+time ./get_client localhost 11211 ${1} ${2}
 
 #Get stats
 echo "Get stats"
@@ -33,7 +33,7 @@ sleep 2
 
 #Send requests
 echo "Sending requests..."
-./get_client localhost 11211 ${1} ${2}
+time ./get_client localhost 11211 ${1} ${2}
 
 
 #Get stats
