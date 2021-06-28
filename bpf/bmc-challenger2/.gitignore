@@ -1,4 +1,4 @@
 /linux
 *.ll
 *.o
-bmc
+bmc2

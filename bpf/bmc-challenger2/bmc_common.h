@@ -21,8 +21,12 @@
 #define BMC_MAX_PACKET_LENGTH 1500
 #define BMC_MAX_KEY_IN_PACKET BMC_MAX_KEY_IN_MULTIGET
 
+#define CACHE_ENTRY_LIFEPOINTS 1
+#define CACHE_ENTRY_BASE_LIFEPOINTS CACHE_ENTRY_LIFEPOINTS+1
+
 #define FNV_OFFSET_BASIS_32		2166136261
 #define FNV_PRIME_32			16777619
+#define FNV_PRIME_2_32			83227
 
 enum {
 	BMC_PROG_XDP_HASH_KEYS = 0,
@@ -45,6 +49,7 @@ struct bmc_cache_entry {
 	unsigned int len;
 	char valid;
 	int hash;
+	unsigned int challenger;
 	char data[BMC_MAX_CACHE_DATA_SIZE];
 };
 

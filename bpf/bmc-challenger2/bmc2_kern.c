@@ -370,6 +370,16 @@ int bmc_write_reply_main(struct xdp_md *ctx)
 			}
 		}
 	}
+	
+	if (cache_hit) {
+		// HIT, we remove the challenger and reset the lifepoints
+		// entry->valid = CACHE_ENTRY_BASE_LIFEPOINTS;
+		if(entry->valid < CACHE_ENTRY_BASE_LIFEPOINTS) {
+			entry->valid++;
+		}
+		entry->challenger = 0;
+	}
+
 	bpf_spin_unlock(&entry->lock);
 
 	struct bmc_stats *stats = bpf_map_lookup_elem(&map_stats, &zero);
@@ -545,13 +555,16 @@ int bmc_update_cache_main(struct __sk_buff *skb)
 	char *payload = (data + sizeof(struct ethhdr) + sizeof(struct iphdr) + sizeof(struct udphdr) + sizeof(struct memcached_udp_header));
 	unsigned int zero = 0;
 
-	u32 hash = FNV_OFFSET_BASIS_32;
+	u32 hash  = FNV_OFFSET_BASIS_32;
+	u32 hash2 = FNV_OFFSET_BASIS_32;
 
 	// compute the key hash
 #pragma clang loop unroll(disable)
 	for (unsigned int off = 6; off-6 < BMC_MAX_KEY_LENGTH && payload+off+1 <= data_end && payload[off] != ' '; off++) {
-		hash ^= payload[off];
-		hash *= FNV_PRIME_32;
+		hash  ^= payload[off];
+		hash  *= FNV_PRIME_32;
+		hash2 ^= payload[off];
+		hash2 *= FNV_PRIME_2_32;
 	}
 
 	u32 cache_idx = hash % BMC_CACHE_ENTRY_COUNT;
@@ -561,8 +574,11 @@ int bmc_update_cache_main(struct __sk_buff *skb)
 	}
 
 	bpf_spin_lock(&entry->lock);
+	// If the cache is valid compare keys to confirm the there is no need to update, 
+	// If the cache is invalid continue to update.
 	if (entry->valid && entry->hash == hash) { // cache is up-to-date; no need to update
 		int diff = 0;
+		// Compare key values, if they are different update cache.
 		// loop until both bytes are spaces ; or break if they are different
 #pragma clang loop unroll(disable)
 		for (unsigned int off = 6; off-6 < BMC_MAX_KEY_LENGTH && payload+off+1 <= data_end && off < entry->len && (payload[off] != ' ' || entry->data[off] != ' '); off++) {
@@ -571,11 +587,33 @@ int bmc_update_cache_main(struct __sk_buff *skb)
 				break;
 			}
 		}
+		// Case : requests 1 invalidates the cache then an indentical
+		// request 2 misses, request 1 will update the cache, and request 2
+		// will enter the following if.
 		if (diff == 0) {
 			bpf_spin_unlock(&entry->lock);
 			return TC_ACT_OK;
 		}
 	}
+
+	// We are going to try to update the cache, if the entry is invalid
+	// update it in all cases, else if the entry is still valid
+	// we need to record the challenger that is trying to replace it.
+	// If the same challenger comes again, he has the right to reduce the entry
+	// lifepoints, if the lifepoints reach zero the challenger replaces the entry.
+	if (entry->valid > 1 && entry->challenger != hash2) { // I am a new challenger
+		entry->challenger = hash2;
+		bpf_spin_unlock(&entry->lock);
+		return TC_ACT_OK;
+	} else if (entry->challenger == hash2 && (--entry->valid) > 1) {
+		// The challenger reduced the lifepoints of the entry but the
+		// entry is still alive so it cannot replace it.
+		bpf_spin_unlock(&entry->lock);
+		return TC_ACT_OK;
+	}
+	
+	// If we are here either the entry was invalid or it was killed by the challenger.
+	// In both cases we are going to update the entry.
 
 	unsigned int count = 0;
 	entry->len = 0;
@@ -589,8 +627,9 @@ int bmc_update_cache_main(struct __sk_buff *skb)
 	}
 
 	if (count == 2) { // copy OK
-		entry->valid = 1;
-		entry->hash = hash;
+		entry->valid      = CACHE_ENTRY_BASE_LIFEPOINTS; 
+		entry->hash       = hash;
+		entry->challenger = 0;
 		bpf_spin_unlock(&entry->lock);
 		struct bmc_stats *stats = bpf_map_lookup_elem(&map_stats, &zero);
 		if (!stats) {
