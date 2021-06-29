@@ -373,10 +373,7 @@ int bmc_write_reply_main(struct xdp_md *ctx)
 	
 	if (cache_hit) {
 		// HIT, we remove the challenger and reset the lifepoints
-		// entry->valid = CACHE_ENTRY_BASE_LIFEPOINTS;
-		if(entry->valid < CACHE_ENTRY_BASE_LIFEPOINTS) {
-			entry->valid++;
-		}
+		entry->valid = CACHE_ENTRY_BASE_LIFEPOINTS;
 		entry->challenger = 0;
 	}
 
@@ -488,7 +485,7 @@ int bmc_invalidate_cache_main(struct xdp_md *ctx)
 					return XDP_PASS;
 				}
 				bpf_spin_lock(&entry->lock);
-				if (entry->valid) {
+				if (entry->valid && entry->hash == hash) {
 					entry->valid = 0;
 					stats->invalidation_count++;
 				}

@@ -63,7 +63,7 @@ pkill bmc2
 ./scripts/tc_detach.sh
 #cat /sys/kernel/debug/tracing/trace_pipe &
 #pkill cat
-cat /tmp/bmc_stats.txt
+cat /tmp/bmc2_stats.txt
 echo "================================End test 3 : base bmc    =========================================="
 
 

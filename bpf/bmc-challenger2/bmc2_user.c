@@ -28,7 +28,7 @@
 
 #define BPF_SYSFS_ROOT "/sys/fs/bpf"
 
-#define STATS_PATH "/tmp/bmc_stats.txt"
+#define STATS_PATH "/tmp/bmc2_stats.txt"
 #define STATS_INTERVAL_PATH "/tmp/bmc_stats_interval.txt"
 
 static int nr_cpus = 0;
