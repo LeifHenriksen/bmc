@@ -31,12 +31,10 @@ KERN_OBJECTS = ${KERN_SOURCES:.c=.o}
 USER_OBJECTS = ${USER_SOURCES:.c=.o}
 
 LIBBPF = $(LIBBPF_PATH)/libbpf.a
-HP = ""
 CFLAGS := -g -O2 -Wall
 CFLAGS += -I.
 CFLAGS += -I$(LINUX_LIB_PATH)
 CFLAGS += -I$(LINUX_TOOLS_PATH)/include/uapi
-CFLAGS += -DCACHE_ENTRY_BASE_LIFEPOINTS=$(HP)
 
 LDFLAGS ?= -L$(LIBBPF_PATH) -l:libbpf.a -lelf $(USER_LIBS)
 
@@ -125,7 +123,6 @@ $(KERN_OBJECTS): %.o: %.c
 	    -Wno-tautological-compare \
 	    -Wno-unknown-warning-option \
 	    -Wno-address-of-packed-member \
-	    -DCACHE_ENTRY_BASE_LIFEPOINTS=$(HP) \
 	    -O2 -g -emit-llvm -c $< -o ${@:.o=.ll}
 	$(LLC) -march=bpf -filetype=obj -o $@ ${@:.o=.ll}
 
