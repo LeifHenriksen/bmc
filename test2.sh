@@ -13,6 +13,8 @@ time ./get_client localhost 11211 ${1} ${2}
 #Get stats
 echo "Get stats"
 pkill -10 memcached_bpf
+echo "Dump cache"
+pkill -12 memcached_bpf
 pkill memcached_bpf
 ./tc_memcached_detach.sh
 #cat /sys/kernel/debug/tracing/trace_pipe &
