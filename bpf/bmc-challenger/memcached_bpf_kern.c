@@ -385,9 +385,10 @@ int xdp_memcached_rx_get_write_pkt_main(struct xdp_md *ctx)
 				payload[off] = entry->data[off];
 				written += 1;
 			}
-			if (entry->valid < CACHE_ENTRY_BASE_LIFEPOINTS) {
-				entry->valid++;
-			}
+			//if (entry->valid < CACHE_ENTRY_BASE_LIFEPOINTS) {
+			//	entry->valid++;
+			//}
+			entry->valid = CACHE_ENTRY_BASE_LIFEPOINTS;
 			entry->challenger = 0;
 		}
 	}
@@ -590,10 +591,10 @@ int tc_memcached_tx_get_parse_main(struct __sk_buff *skb)
 		return TC_ACT_OK;
 	}
 
-	u32 new_key_hotness = 0xFFFFFFFF;
-	if (payload+KEY_HOTNESS_OFFSET+KEY_HOTNESS_SIZE <= data_end) {
-		new_key_hotness = ((u32)payload[KEY_HOTNESS_OFFSET] << 24) + ((u32)payload[KEY_HOTNESS_OFFSET+1] << 16) + ((u32)payload[KEY_HOTNESS_OFFSET+2] << 8) + ((u32)payload[KEY_HOTNESS_OFFSET+3]);
-	}
+	//u32 new_key_hotness = 0xFFFFFFFF;
+	//if (payload+KEY_HOTNESS_OFFSET+KEY_HOTNESS_SIZE <= data_end) {
+	//	new_key_hotness = ((u32)payload[KEY_HOTNESS_OFFSET] << 24) + ((u32)payload[KEY_HOTNESS_OFFSET+1] << 16) + ((u32)payload[KEY_HOTNESS_OFFSET+2] << 8) + ((u32)payload[KEY_HOTNESS_OFFSET+3]);
+	//}
 
 	bpf_spin_lock(&entry->lock);
 	if (entry->valid && entry->hash == hash) { // cache is up-to-date; no need to update
@@ -612,6 +613,7 @@ int tc_memcached_tx_get_parse_main(struct __sk_buff *skb)
 		}
 	}
 
+	unsigned int old_valid = entry->valid;
 	if(entry->valid > 1 && entry->challenger != hash2) { // New challenger
 		entry->challenger = hash2;
 		bpf_spin_unlock(&entry->lock);
@@ -626,10 +628,10 @@ int tc_memcached_tx_get_parse_main(struct __sk_buff *skb)
 		return TC_ACT_OK;
 	}
 
-	u32 old_key_hotness = 0xFFFFFFFF;
-	if (entry->valid > 0 && KEY_HOTNESS_OFFSET+KEY_HOTNESS_SIZE < MAX_CACHE_DATA_SIZE) {
-		old_key_hotness = ((u32)entry->data[KEY_HOTNESS_OFFSET] << 24) + ((u32)entry->data[KEY_HOTNESS_OFFSET+1] << 16) + ((u32)entry->data[KEY_HOTNESS_OFFSET+2] << 8) + ((u32)entry->data[KEY_HOTNESS_OFFSET+3]); 
-	}
+	//u32 old_key_hotness = 0xFFFFFFFF;
+	//if (entry->valid > 0 && KEY_HOTNESS_OFFSET+KEY_HOTNESS_SIZE < MAX_CACHE_DATA_SIZE) {
+	//	old_key_hotness = ((u32)entry->data[KEY_HOTNESS_OFFSET] << 24) + ((u32)entry->data[KEY_HOTNESS_OFFSET+1] << 16) + ((u32)entry->data[KEY_HOTNESS_OFFSET+2] << 8) + ((u32)entry->data[KEY_HOTNESS_OFFSET+3]); 
+	//}
 
 	unsigned int count = 0;
 	entry->len = 0;
@@ -661,7 +663,11 @@ int tc_memcached_tx_get_parse_main(struct __sk_buff *skb)
 			return XDP_PASS;
 		}
 		stats->update_count++;
+		if(old_valid > 0) {
+			stats->hot_replace_cold++;
+		}
 		//stats->unused_count += not_used;
+		/*
 		if (old_key_hotness < HOT_DATA_LIMIT && new_key_hotness < HOT_DATA_LIMIT) {
 			stats->hot_replace_hot++;
 		} else if (old_key_hotness >= HOT_DATA_LIMIT && new_key_hotness >= HOT_DATA_LIMIT) {
@@ -671,7 +677,7 @@ int tc_memcached_tx_get_parse_main(struct __sk_buff *skb)
 		} else if (old_key_hotness < HOT_DATA_LIMIT && new_key_hotness >= HOT_DATA_LIMIT) {
 			stats->cold_replace_hot++;
 		}
-
+		*/
 	} else {
 		bpf_spin_unlock(&entry->lock);
 	}

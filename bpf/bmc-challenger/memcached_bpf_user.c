@@ -21,7 +21,7 @@
 #define STATS_INTERVAL_PATH "/tmp/Memcached-bpf/memcached_bpf_stats_interval.txt"
 #define CACHE_DUMP_PATH "/tmp/Memcached-bpf/cache_dump.txt"
 
-#define DUMP_CACHE_VALUE 0
+#define DUMP_CACHE_VALUE 1
 
 static int nr_cpus = 0;
 
