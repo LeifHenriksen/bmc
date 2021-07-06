@@ -57,15 +57,16 @@ int main(int argc, char **argv)
 	{
 		unsigned int id = zipf_distribution_next(&zipf);
 		char curr_key[KEY_SIZE + 1];
-		//memcached_gen_key(curr_key, KEY_SIZE, id);
+		memcached_gen_key(curr_key, KEY_SIZE, id);
 		keys[id]++;
-		//if(!(i % 50000))
-		//	progress_bar(i, GET_COUNT);
+		c.get(std::string(curr_key, KEY_SIZE));
+		if(!(i % 50000))
+			progress_bar(i, GET_COUNT);
 	}
 
 	std::sort(keys.begin(), keys.end());
 	std::reverse(keys.begin(), keys.end());
-	for(int i = 0; i < 50; i++) {
+	for(int i = 0; i < 15; i++) {
 		char curr_key[KEY_SIZE + 1];
 		memcached_gen_key(curr_key, KEY_SIZE, i);
 		printf("%.16s, %li\n", curr_key, keys[i]);
