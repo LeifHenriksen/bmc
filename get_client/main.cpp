@@ -54,8 +54,8 @@ int main(int argc, char **argv)
 		char curr_key[KEY_SIZE + 1];
 		memcached_gen_key(curr_key, KEY_SIZE, id);
 		c.get(std::string(curr_key, KEY_SIZE));
-		if(!(i % 50000))
-			progress_bar(i, GET_COUNT);
+		//if(!(i % 50000))
+		//	progress_bar(i, GET_COUNT);
 	}
 
 	return 0;
