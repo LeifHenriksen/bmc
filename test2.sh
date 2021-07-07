@@ -1,25 +1,26 @@
 ####################  Test 2 memcached_bpf (hash2) ############################
 #Test 1 base bmc
-echo "============================Starting test 2 : memcached_bpf (hash2)================================"
+echo "============================Starting test 2 : memcached_bpf (hash2)========================="
 nohup ./memcached_bpf 1 &
 sleep 2
 ./tc_memcached_attach.sh lo 
 
 #Send requests
 echo "Sending requests..."
-time ./get_client localhost 11211 ${1} ${2}
+#time ./get_client localhost 11211 ${1} ${2}
 
+echo "[]" > results_test2.json
 
-#Get stats
-echo "Get stats"
-pkill -10 memcached_bpf
-echo "Dump cache"
-pkill -12 memcached_bpf
+for ((i = 0; i < 10; i++))
+do
+	./get_client localhost 11211 ${1} ${2} $((${1} * i))
+	pkill -10 memcached_bpf
+	pkill -12 memcached_bpf
+	sleep 3
+	python3 analyser.py /tmp/Memcached-bpf/cache_dump.txt /tmp/Memcached-bpf/memcached_bpf_stats.txt results_test2.json
+done
+
+echo "Kill BMC"
 pkill memcached_bpf
 ./tc_memcached_detach.sh
-#cat /sys/kernel/debug/tracing/trace_pipe &
-#pkill cat
-cat /tmp/Memcached-bpf/*
-echo "============================End test 2 : memcached_bpf (hash2)    ================================"
-
-
+echo "============================End test 2 : memcached_bpf (hash2)============================="
