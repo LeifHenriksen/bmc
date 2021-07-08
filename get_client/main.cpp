@@ -8,6 +8,7 @@
 #include <vector>
 #include "random.h"
 #include "client.h"
+#include "hash.h"
 
 #define RAND_INIT 42
 #define ZIPF_SKEW .99
@@ -32,6 +33,34 @@ void progress_bar(size_t prog, size_t end)
 	alive++;
 }
 
+int test_collisions(size_t KEY_COUNT)
+{
+	size_t HOT = (5 * KEY_COUNT) / 100;
+	char curr_key[KEY_SIZE + 1];
+	unsigned int hash;
+	const size_t CACHE_SIZE = 3250000;
+	unsigned int *cache = new unsigned int[CACHE_SIZE];
+	size_t taken = 0;
+
+	memset(cache, 0, HOT);
+
+	for(size_t i = 0; i < HOT; i++) {
+		memcached_gen_key(curr_key, KEY_SIZE, i);
+		hash = get_hash(curr_key);
+		cache[hash % CACHE_SIZE]++;
+	}
+
+	for(size_t i = 0; i < CACHE_SIZE; i++) {
+		if(cache[i] > 0) taken++;
+	}
+	
+	printf("HOT = %li, taken = %li, collisions = %li, last_key = %.16s\n", 
+			HOT, taken, HOT - taken, curr_key);
+
+	delete[] cache;
+	return 0;
+}
+
 int main(int argc, char **argv)
 {
 	if(argc < 6)
@@ -53,8 +82,6 @@ int main(int argc, char **argv)
 	random_init_seed(RAND_INIT);
 	zipf_distribution_init(&zipf, KEY_COUNT, 0.99f);
 
-	std::vector<unsigned int> keys(KEY_COUNT);
-
 	printf("Sending requests...\n");
 
 	for(size_t i = 0; i < START_KEY; ++i) {
@@ -65,19 +92,12 @@ int main(int argc, char **argv)
 		unsigned int id = zipf_distribution_next(&zipf);
 		char curr_key[KEY_SIZE + 1];
 		memcached_gen_key(curr_key, KEY_SIZE, id);
-		keys[id]++;
 		c.get(std::string(curr_key, KEY_SIZE));
 		//if(!(i % 50000))
 		//	progress_bar(i, GET_COUNT);
 	}
-/*
-	std::sort(keys.begin(), keys.end());
-	std::reverse(keys.begin(), keys.end());
-	for(int i = 0; i < 15; i++) {
-		char curr_key[KEY_SIZE + 1];
-		memcached_gen_key(curr_key, KEY_SIZE, i);
-		printf("%.16s, %u\n", curr_key, keys[i]);
-	}
-*/
+
+	//test_collisions(KEY_COUNT);
+
 	return 0;
 }
