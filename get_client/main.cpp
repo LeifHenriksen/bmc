@@ -83,7 +83,7 @@ int main(int argc, char **argv)
 	zipf_distribution_init(&zipf, KEY_COUNT, 0.99f);
 
 	printf("Sending requests...\n");
-/*
+
 	for(size_t i = 0; i < START_KEY; ++i) {
 		zipf_distribution_next(&zipf);
 	}
@@ -96,8 +96,8 @@ int main(int argc, char **argv)
 		if(!(i % 50000))
 			progress_bar(i, GET_COUNT);
 	}
-*/
-	test_collisions(KEY_COUNT);
+
+	//test_collisions(KEY_COUNT);
 
 	return 0;
 }
