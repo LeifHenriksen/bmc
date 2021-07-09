@@ -77,7 +77,7 @@ int main(int argc, char **argv)
 
 	srand(RAND_INIT);
 
-	printf("get_client : GET_COUNT = %li, KEY_COUNT = %li\n", GET_COUNT, KEY_COUNT);
+	printf("get_client : GET_COUNT = %li, KEY_COUNT = %li, START_KEY = %li\n", GET_COUNT, KEY_COUNT, START_KEY);
 	printf("Zipf init...\n");
 	random_init_seed(RAND_INIT);
 	zipf_distribution_init(&zipf, KEY_COUNT, 0.99f);
@@ -93,8 +93,8 @@ int main(int argc, char **argv)
 		char curr_key[KEY_SIZE + 1];
 		memcached_gen_key(curr_key, KEY_SIZE, id);
 		c.get(std::string(curr_key, KEY_SIZE));
-		//if(!(i % 50000))
-		//	progress_bar(i, GET_COUNT);
+		if(!(i % 50000))
+			progress_bar(i, GET_COUNT);
 	}
 
 	//test_collisions(KEY_COUNT);
