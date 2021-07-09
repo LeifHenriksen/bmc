@@ -2,7 +2,7 @@
 echo "=======================Starting test 2 : memcached_bpf (hash2)===================="
 timestamp=$(date "+%Y-%m-%d-%H-%M-%S")
 HP=${3}
-count=100
+count=10
 results=res_KEYCNT${2}_REQ$((${1} * ${count}))_HP${HP}_${timestamp}.json
 
 nohup ./memcached_bpf 1 &
