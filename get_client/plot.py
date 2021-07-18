@@ -27,3 +27,7 @@ if __name__ == "__main__" :
     print("EMPTY")
     for entry in data :
         print(entry['empty_keys']);
+    
+    print("HIT")
+    for entry in data :
+        print(entry['hit_count']);
