@@ -27,7 +27,10 @@ if __name__ == "__main__" :
     print("EMPTY")
     for entry in data :
         print(entry['empty_keys']);
-    
-    print("HIT")
-    for entry in data :
-        print(entry['hit_count']);
+   
+    print("HITS")
+    print(data[0]['hit_count'])
+    last_hit = data[0]['hit_count']
+    for entry in data[1:]:
+        print(int(entry['hit_count']) - int(last_hit));
+        last_hit = entry['hit_count']

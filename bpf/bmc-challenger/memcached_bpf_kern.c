@@ -614,6 +614,8 @@ int tc_memcached_tx_get_parse_main(struct __sk_buff *skb)
 	}
 
 	unsigned int old_valid = entry->valid;
+	
+	/*
 	if(entry->valid > 1 && entry->challenger != hash2) { // New challenger
 		entry->challenger = hash2;
 		bpf_spin_unlock(&entry->lock);
@@ -627,6 +629,7 @@ int tc_memcached_tx_get_parse_main(struct __sk_buff *skb)
 		//log_info("entry->challenger = %u, hash = %u, entry->data = %i\n", entry->challenger, hash, entry->data[6]);
 		return TC_ACT_OK;
 	}
+	*/
 
 	//u32 old_key_hotness = 0xFFFFFFFF;
 	//if (entry->valid > 0 && KEY_HOTNESS_OFFSET+KEY_HOTNESS_SIZE < MAX_CACHE_DATA_SIZE) {
