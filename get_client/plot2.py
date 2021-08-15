@@ -48,7 +48,7 @@ if __name__ == "__main__" :
     ax1.legend()
 
     ax2 = ax1.twinx()
-    ax2.plot(requetes, HIT, label = "HIT")
+    ax2.plot(requetes, HIT, label = "HIT", color = "GREEN")
     ax2.legend()
     ax2.set_ylabel('Taux de HIT')
     

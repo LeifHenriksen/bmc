@@ -3,7 +3,7 @@
 LIBS = -lm -lpthread -I.
 
 # -maxdepth -> dont recompile .o in the subfolders
-SOURCES = $(shell find . -maxdepth 1 -name "*.cpp")
+SOURCES = $(shell find . -name "*.cpp")
 ALL_SOURCES = $(shell find . -name "*.cpp")
 
 OBJ = $(subst .cpp,.o,$(SOURCES))

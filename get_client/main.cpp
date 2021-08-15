@@ -63,9 +63,9 @@ int test_collisions(size_t KEY_COUNT)
 
 int main(int argc, char **argv)
 {
-	if(argc < 6)
+	if(argc < 8)
 	{
-		printf("Error in arguments : Usage ./get_client IP PORT GET_COUNT KEY_COUNT START_KEY\n");
+		printf("Error in arguments : Usage ./get_client IP PORT GET_COUNT KEY_COUNT START_KEY MIN_TEMP MAX_TEMP\n");
 		exit(0);
 	}
 
@@ -73,6 +73,9 @@ int main(int argc, char **argv)
 	size_t GET_COUNT = atoi(argv[3]);	
 	size_t KEY_COUNT = atoi(argv[4]);
 	size_t START_KEY = atoi(argv[5]);
+	size_t MIN_TEMP  = atoi(argv[6]);
+	size_t MAX_TEMP  = atoi(argv[7]);
+
 	struct zipf_distribution zipf;
 
 	srand(RAND_INIT);
@@ -87,14 +90,18 @@ int main(int argc, char **argv)
 	for(size_t i = 0; i < START_KEY; ++i) {
 		zipf_distribution_next(&zipf);
 	}
-
-	for(size_t i = 0; i < GET_COUNT; ++i) {
+	
+	size_t j = 0;
+	for(size_t i = 0; j < GET_COUNT; ++i) {
 		unsigned int id = zipf_distribution_next(&zipf);
+		if(id < MIN_TEMP || id > MAX_TEMP) continue;
+
+		j++; //Only increment if we did a sent a get request.
 		char curr_key[KEY_SIZE + 1];
 		memcached_gen_key(curr_key, KEY_SIZE, id);
 		c.get(std::string(curr_key, KEY_SIZE));
-		if(!(i % 50000))
-			progress_bar(i, GET_COUNT);
+		if(!(j % 50000))
+			progress_bar(j, GET_COUNT);
 	}
 
 	//test_collisions(KEY_COUNT);

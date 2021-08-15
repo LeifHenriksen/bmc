@@ -17,10 +17,10 @@ echo "[]" > ${results}
 
 for ((i = 0; i < ${count}; i++))
 do
-	./get_client localhost 11211 ${1} ${2} $((${1} * i))
+	./get_client localhost 11211 ${1} ${2} $((${1} * i)) 0 ${2}
 	pkill -10 memcached_bpf
 	pkill -12 memcached_bpf
-	sleep 3
+	sleep 5 
 	python3 analyser.py /tmp/Memcached-bpf/cache_dump.txt /tmp/Memcached-bpf/memcached_bpf_stats.txt ${results}
 done
 
